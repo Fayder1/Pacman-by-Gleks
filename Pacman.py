@@ -43,3 +43,40 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
     def is_free(self, position):
         """вспомогательный метод, возвращающий True/False если клетка свободна/занята"""
         return self.get_tile_id(position) in self.free_tiles
+    def find_path_step(self, start, target, direction):
+        """алгоритм построения маршрута для призраков (поиск следующего тайла)"""
+        x, y = start
+        xt, yt = target
+        tile_list = []
+        distance = []
+        if direction == 'up':
+            if self.is_free((x, y - 1)):
+                tile_list.append((x, y - 1))
+            if self.is_free((x - 1, y)):
+                tile_list.append((x - 1, y))
+            if self.is_free((x + 1, y)): tile_list.append((x + 1, y))
+        if direction == 'down':
+            if self.is_free((x - 1, y)):
+                tile_list.append((x - 1, y))
+            if self.is_free((x, y + 1)):
+                tile_list.append((x, y + 1))
+            if self.is_free((x + 1, y)):
+                tile_list.append((x + 1, y))
+        if direction == 'right':
+            if self.is_free((x, y - 1)):
+                tile_list.append((x, y - 1))
+            if self.is_free((x, y + 1)):
+                tile_list.append((x, y + 1))
+            if self.is_free((x + 1, y)):
+                tile_list.append((x + 1, y))
+        if direction == 'left':
+            if self.is_free((x, y - 1)):
+                tile_list.append((x, y - 1))
+            if self.is_free((x - 1, y)):
+                tile_list.append((x - 1, y))
+            if self.is_free((x, y + 1)):
+                tile_list.append((x, y + 1))
+        for tile in tile_list:
+            xn, yn = tile
+            distance.append(abs(xn - xt) ** 2 + abs(yn - yt) ** 2)
+        return tile_list[distance.index(min(distance))]
