@@ -36,3 +36,10 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
                 rect = pygame.Rect(x * self.tile_size, y * self.tile_size,
                                    self.tile_size, self.tile_size)
                 screen.fill(colors[self.get_tile_id((x, y))], rect)
+    def get_tile_id(self, position):
+        """вспомогательный метод, возвращающий id тайла"""
+        return self.map[position[1]][position[0]]
+
+    def is_free(self, position):
+        """вспомогательный метод, возвращающий True/False если клетка свободна/занята"""
+        return self.get_tile_id(position) in self.free_tiles
