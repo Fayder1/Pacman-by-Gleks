@@ -130,7 +130,7 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         self.red.update_image()
 
 
-     def move_pink(self):
+    def move_pink(self):
         """метод перемещения розового призрака"""
         direction = self.pacman.get_curr_dir()
         target = ()
@@ -147,4 +147,25 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         self.pink.set_direction(find_direction(self.pink.get_position(), next_position))
         self.pink.set_position(next_position)
         self.pink.update_image()
+
+    def move_blue(self):
+        """метод перемещения голубого призрака"""
+        direction = self.pacman.get_curr_dir()
+        center = ()
+        if direction == 'up':
+            center = self.pacman.get_position()[0] - 2, self.pacman.get_position()[1] - 2
+        if direction == 'down':
+            center = self.pacman.get_position()[0], self.pacman.get_position()[1] + 2
+        if direction == 'right':
+            center = self.pacman.get_position()[0] + 2, self.pacman.get_position()[1]
+        if direction == 'left':
+            center = self.pacman.get_position()[0] - 2, self.pacman.get_position()[1]
+        xc, yc = center
+        xr, yr = self.red.get_position()
+        target = 2 * xc - xr, 2 * yc - yr
+        next_position = self.labyrinth.find_path_step(self.blue.get_position(), target,
+                                                      self.blue.get_direction())
+        self.blue.set_direction(find_direction(self.blue.get_position(), next_position))
+        self.blue.set_position(next_position)
+        self.blue.update_image()
             
