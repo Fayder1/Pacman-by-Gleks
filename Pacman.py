@@ -92,8 +92,8 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
 
 
 
- """Моя частина"""
- def update_direct_pacman(self):
+        """Моя частина"""
+    def update_direct_pacman(self):
         """метод, выставляющий следующее направление пакмена, если такой поворот возможен"""
         next_x, next_y = self.pacman.get_position()
         if self.pacman.get_next_dir() == 'up':
@@ -119,3 +119,13 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
             next_x -= 1
         if self.labyrinth.is_free((next_x, next_y)):
             self.pacman.set_position((next_x, next_y))
+
+    def move_red(self):
+        """метод перемещения красного призрака"""
+        target = self.pacman.get_position()
+        next_position = self.labyrinth.find_path_step(self.red.get_position(), target,
+                                                      self.red.get_direction())
+        self.red.set_direction(find_direction(self.red.get_position(), next_position))
+        self.red.set_position(next_position)
+        self.red.update_image()
+            
