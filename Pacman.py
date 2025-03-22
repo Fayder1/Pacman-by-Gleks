@@ -168,4 +168,22 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         self.blue.set_direction(find_direction(self.blue.get_position(), next_position))
         self.blue.set_position(next_position)
         self.blue.update_image()
+
+    def move_orange(self):
+        """метод перемещения оранжевого призрака"""
+        x = abs(self.pacman.get_position()[0] - self.orange.get_position()[0])
+        y = abs(self.pacman.get_position()[1] - self.orange.get_position()[1])
+        distance = round((x ** 2 + y ** 2) ** 0.5)
+        if distance >= 8:
+            next_position = self.labyrinth.find_path_step(self.orange.get_position(),
+                                                          self.pacman.get_position(),
+                                                          self.orange.get_direction())
+        else:
+            next_position = self.labyrinth.find_path_step(self.orange.get_position(),
+                                                          (1, 13), self.orange.get_direction())
+        self.orange.set_direction(find_direction(self.orange.get_position(), next_position))
+        self.orange.set_position(next_position)
+        self.orange.update_image()
+
+
             
