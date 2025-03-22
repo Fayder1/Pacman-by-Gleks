@@ -80,3 +80,42 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
             xn, yn = tile
             distance.append(abs(xn - xt) ** 2 + abs(yn - yt) ** 2)
         return tile_list[distance.index(min(distance))]
+
+
+
+
+
+
+
+
+
+
+
+
+ """Моя частина"""
+ def update_direct_pacman(self):
+        """метод, выставляющий следующее направление пакмена, если такой поворот возможен"""
+        next_x, next_y = self.pacman.get_position()
+        if self.pacman.get_next_dir() == 'up':
+            if self.labyrinth.is_free((next_x, next_y - 1)):
+                self.pacman.set_curr_dir('up')
+        if self.pacman.get_next_dir() == 'down':
+            if self.labyrinth.is_free((next_x, next_y + 1)):
+                self.pacman.set_curr_dir('down')
+        if self.pacman.get_next_dir() == 'right':
+            if self.labyrinth.is_free((next_x + 1, next_y)):
+                self.pacman.set_curr_dir('right')
+        if self.pacman.get_next_dir() == 'left':
+            if self.labyrinth.is_free((next_x - 1, next_y)):
+                self.pacman.set_curr_dir('left')
+
+        if self.pacman.get_curr_dir() == 'up':
+            next_y -= 1
+        if self.pacman.get_curr_dir() == 'down':
+            next_y += 1
+        if self.pacman.get_curr_dir() == 'right':
+            next_x += 1
+        if self.pacman.get_curr_dir() == 'left':
+            next_x -= 1
+        if self.labyrinth.is_free((next_x, next_y)):
+            self.pacman.set_position((next_x, next_y))
