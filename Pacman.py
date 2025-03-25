@@ -198,9 +198,9 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
                 self.pacman.get_position() == self.blue.get_position())
 
 
-    def find_direction(start, target):
-    """Функция, определяющая направление движения призрака, исходя из текущего и следующего положения"""
-    x, y = start
+     def find_direction(start, target):
+        """Функция, определяющая направление движения призрака, исходя из текущего и следующего положения"""
+        x, y = start
     xn, yn = target
     if xn - x == 1:
         return 'right'
@@ -210,6 +210,36 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         return 'down'
     if yn - y == - 1:
         return 'up'
+    
+    def show_message(screen, message1, message2):
+    """Функция вывода сообщения на экран в конце игры"""
+    font = pygame.font.Font(None, 50)
+    text1 = font.render(message1, True, (50, 70, 0))
+    text2 = font.render(message2, True, (50, 70, 0))
+    text_x = WINDOW_WIDTH // 2 - text1.get_width() // 2
+    text_y = WINDOW_HEIGHT // 2 - text1.get_height() // 2
+    text_w = text1.get_width()
+    text_h = text1.get_height()
+    pygame.draw.rect(screen, (200, 150, 50), (text_x - 10, text_y - 10,
+                                              text_w + 20, text_h + 20))
+    screen.blit(text1, (text_x, text_y))
+
+    text_x1 = WINDOW_WIDTH // 2 - text2.get_width() // 2
+    text_y1 = WINDOW_HEIGHT // 2 - text2.get_height() // 2
+    text_w1 = text2.get_width()
+    text_h1 = text2.get_height()
+    pygame.draw.rect(screen, (200, 150, 50), (text_x1 - 10, text_y1 + 40,
+                                              text_w1 + 20, text_h1 + 20))
+
+    screen.blit(text2, (text_x1, text_y1 + 50))
+
+
+    def terminate():
+    """Функция закрытия игры"""
+    pygame.quit()
+    sys.exit()
+
+
 
 
             
