@@ -185,5 +185,10 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         self.orange.set_position(next_position)
         self.orange.update_image()
 
+    def check_win(self):
+        """проверка на победу"""
+        if not self.check_lose():
+            return self.labyrinth.get_tile_id(self.pacman.get_position()) == self.labyrinth.finish_tile
+
 
             
