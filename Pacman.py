@@ -189,6 +189,27 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         """проверка на победу"""
         if not self.check_lose():
             return self.labyrinth.get_tile_id(self.pacman.get_position()) == self.labyrinth.finish_tile
+        
+    def check_lose(self):
+        """проверка на поражение"""
+        return (self.pacman.get_position() == self.red.get_position() or
+                self.pacman.get_position() == self.orange.get_position() or
+                self.pacman.get_position() == self.pink.get_position() or
+                self.pacman.get_position() == self.blue.get_position())
+
+
+    def find_direction(start, target):
+    """Функция, определяющая направление движения призрака, исходя из текущего и следующего положения"""
+    x, y = start
+    xn, yn = target
+    if xn - x == 1:
+        return 'right'
+    if xn - x == -1:
+        return 'left'
+    if yn - y == 1:
+        return 'down'
+    if yn - y == - 1:
+        return 'up'
 
 
             
