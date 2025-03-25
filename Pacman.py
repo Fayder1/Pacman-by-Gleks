@@ -239,6 +239,201 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
     pygame.quit()
     sys.exit()
 
+    def load_menu():
+    """Функция загрузки и обработки меню"""
+    pygame.init()
+
+    instruction_text = ['', 'By Maxim&Maxim!']
+    text_color = 65, 65, 190
+    instruction_font = pygame.font.SysFont('', 18)
+
+    pygame.display.set_caption('Pac-man: chase!')
+    manager = pygame_gui.UIManager(MENU_SIZE)
+    screen = pygame.display.set_mode(MENU_SIZE)
+    screen.fill((0, 0, 0))
+    font = pygame.font.Font(None, 50)
+    text = font.render("Pac-man: chase!", True, (254, 254, 34))
+    text_x = 20
+    text_y = 20
+    text_w = text.get_width()
+    text_h = text.get_height()
+    screen.blit(text, (text_x, text_y))
+    pygame.draw.rect(screen, (254, 254, 34), (text_x - 10, text_y - 10,
+                                              text_w + 20, text_h + 20), 1)
+
+    screen.blit(instruction_font.render(instruction_text[0], True, text_color), (12, 70))
+    screen.blit(instruction_font.render(instruction_text[1], True, text_color), (12, 90))
+
+    for i in range(2, 9):
+        screen.blit(instruction_font.render(instruction_text[i], True, text_color), (12, 120 + ((i - 3) * 20)))
+
+    select = pygame.mixer.Sound(os.path.join(abs_paths['sounds'], 'button.wav.wav'))
+
+    but1 = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((340, 70), (90, 50)),
+        text='1 уровень',
+        manager=manager
+    )
+    but2 = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((340, 130), (90, 50)),
+        text='2 уровень',
+        manager=manager
+    )
+    but3 = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((340, 190), (90, 50)),
+        text='3 уровень',
+        manager=manager
+    )
+    but4 = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((340, 250), (90, 50)),
+        text='4 уровень',
+        manager=manager
+    )
+    but5 = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((340, 310), (90, 50)),
+        text='5 уровень',
+        manager=manager
+    )
+
+    running = True
+    clock = pygame.time.Clock()
+
+    while running:  # цикл меню
+        time_delta = clock.tick(60) / 1000.0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                    select.play()
+                    if event.ui_element == but1:
+                        main('first_map.txt')
+                        running = False
+                    if event.ui_element == but2:
+                        main('second_map.txt')
+                        running = False
+                    if event.ui_element == but3:
+                        main('third_map.txt')
+                        running = False
+                    if event.ui_element == but4:
+                        main('fourth_map.txt')
+                        running = False
+                    if event.ui_element == but5:
+                        main('fifth_map.txt')
+                        running = False
+            manager.process_events(event)
+        manager.update(time_delta)
+        manager.draw_ui(screen)
+        pygame.display.flip()
+    pygame.quit()
+
+
+def main(map):
+    """Главный игровой цикл"""
+    pygame.init()
+    pygame.display.set_caption('Pac-man: chase!')
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+
+    manager = pygame_gui.UIManager(WINDOW_SIZE)
+
+    labyrinth = Labyrinth(f'maps/{map}', [0, 2], 2)
+    pacman = Pacman(POSITIONS[map]['pacman'])
+    red = Red(POSITIONS[map]['red'])
+    pink = Pink(POSITIONS[map]['pink'])
+    blue = Blue(POSITIONS[map]['blue'])
+    orange = Orange(POSITIONS[map]['orange'])
+    game = Game(labyrinth, pacman, red, pink, blue, orange)
+
+    pygame.mixer.music.set_endevent(SONG_END)
+    pygame.mixer.music.load(os.path.join(abs_paths['sounds'], 'start-up.wav'))
+    pygame.mixer.music.play()
+
+    victory = pygame.mixer.Sound(os.path.join(abs_paths['sounds'], 'victory.wav'))
+    lose = pygame.mixer.Sound(os.path.join(abs_paths['sounds'], 'lose.wav'))
+
+    sound_not_played1 = True
+    sound_not_played2 = True
+
+    menu_but = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((250, 0), (50, 40)),
+        text='Меню',
+        manager=manager
+    )
+    revert_but = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((305, 0), (120, 40)),
+        text='Начать заново',
+        manager=manager
+    )
+
+    clock = pygame.time.Clock()
+    running = True
+    game_over = False
+    game_start = False
+    game_start_time = pygame.time.get_ticks() + 4500
+    while running:
+        current_time = pygame.time.get_ticks()
+        time_delta = clock.tick(60) / 1000.0
+        if current_time > game_start_time:
+            game_start = True
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == SONG_END:
+                pygame.mixer.music.load('sounds/siren.wav')
+                pygame.mixer.music.play(-1)
+            elif event.type == GAME_EVENT_TYPE and not game_over and game_start:
+                game.move_red()
+                game.move_pink()
+                game.move_blue()
+                game.move_orange()
+            elif event.type == PACMAN_EVENT and not game_over and game_start:
+                game.update_direct_pacman()
+            elif event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == menu_but:
+                        running = False
+                        game_start = False
+                        pygame.mixer.music.pause()
+                        lose.stop()
+                        victory.stop()
+                        load_menu()
+                    elif event.ui_element == revert_but:
+                        game_start = False
+                        lose.stop()
+                        victory.stop()
+                        main(map)
+            manager.process_events(event)
+        game.direct_pacman()
+        screen.fill((0, 0, 0))
+        game.render(screen)
+        manager.update(time_delta)
+        manager.draw_ui(screen)
+        if game.check_win():
+            if map != 'fifth_map.txt':
+                game_over = True
+                show_message(screen, 'Вы выиграли!', 'Попробуйте и другие уровни')
+            else:
+                game_over = True
+                show_message(screen, 'Вы прошли последний уровень!', 'Поздравляем с победой!')
+            pygame.mixer.music.pause()
+            if sound_not_played1:
+                victory.play(0)
+                sound_not_played1 = False
+        if game.check_lose():
+            game_over = True
+            show_message(screen, 'Вы проиграли!', 'Попробуйте снова')
+            pygame.mixer.music.pause()
+            if sound_not_played2:
+                sound_not_played2 = False
+                lose.play(0)
+        pygame.display.flip()
+    pygame.quit()
+
+
+if __name__ == '__main__':  # Запуск меню
+    load_menu()
+
+
 
 
 
