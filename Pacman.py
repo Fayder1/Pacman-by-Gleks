@@ -462,6 +462,40 @@ class Pacman:  # класс Пакмена
         """метод рендера героя на экран"""
         center = self.x * TILE_SIZE + TILE_SIZE // 2, self.y * TILE_SIZE + TILE_SIZE // 2
         pygame.draw.circle(screen, (255, 255, 0), center, TILE_SIZE // 2)
+class Red:  # Класс красного призрака
+    def __init__(self, position):
+        """инициализатор класса"""
+        self.direction = 'up'
+        self.x, self.y = position
+        self.delay = 200
+        self.image = pygame.image.load(f'characters/red/{self.direction}1.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count = 0
+        pygame.time.set_timer(GAME_EVENT_TYPE, self.delay)
+
+    # вспомогательные методы, возвращающие информацию о положении призрака / выставляющие эти значения
+    def get_position(self):
+        return self.x, self.y
+
+    def set_position(self, position):
+        self.x, self.y = position
+
+    def get_direction(self):
+        return self.direction
+
+    def set_direction(self, direction):
+        self.direction = direction
+
+    def update_image(self):
+        """метод обновления текстуры призрака"""
+        self.image = pygame.image.load(f'characters/red/{self.direction}{self.count % 2}.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count += 1
+
+    def render(self, screen):
+        """метод рендера призрака на экран"""
+        delta = (self.image1.get_width() - TILE_SIZE) // 2
+        screen.blit(self.image1, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
 
 
 
