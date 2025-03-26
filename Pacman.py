@@ -532,6 +532,35 @@ class Pink:  # Класс розового призрака
         """метод рендера призрака на экран"""
         delta = (self.image1.get_width() - TILE_SIZE) // 2
         screen.blit(self.image1, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
+class Game:  # Класс, управляющий игрой
+    def __init__(self, labyrinth, pacman, red, pink, blue, orange):
+        """инициализатор класса"""
+        self.labyrinth = labyrinth
+        self.pacman = pacman
+        self.red = red
+        self.pink = pink
+        self.blue = blue
+        self.orange = orange
+
+    def render(self, screen):
+        """рендер персонажей на экран"""
+        self.labyrinth.render(screen)
+        self.pacman.render(screen)
+        self.red.render(screen)
+        self.pink.render(screen)
+        self.blue.render(screen)
+        self.orange.render(screen)
+
+    def direct_pacman(self):
+        """метод, изменяющий следующее направление движения пакмена"""
+        if pygame.key.get_pressed()[pygame.K_LEFT] or pygame.key.get_pressed()[pygame.K_a]:
+            self.pacman.set_next_dir('left')
+        if pygame.key.get_pressed()[pygame.K_RIGHT] or pygame.key.get_pressed()[pygame.K_d]:
+            self.pacman.set_next_dir('right')
+        if pygame.key.get_pressed()[pygame.K_UP] or pygame.key.get_pressed()[pygame.K_w]:
+            self.pacman.set_next_dir('up')
+        if pygame.key.get_pressed()[pygame.K_DOWN] or pygame.key.get_pressed()[pygame.K_s]:
+            self.pacman.set_next_dir('down')
 
 
 
