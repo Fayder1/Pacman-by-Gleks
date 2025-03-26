@@ -432,6 +432,32 @@ def main(map):
 
 if __name__ == '__main__':  # Запуск меню
     load_menu()
+class Pacman:  # класс Пакмена
+    def __init__(self, position):
+        """инициализатор класса"""
+        self.next_direction = ''
+        self.current_direction = 'left'
+        self.x, self.y = position
+
+    # вспомогательные методы, возвращающие информацию о положении Пакмена / выставляющие эти значения
+    def get_position(self):
+        return self.x, self.y
+
+    def set_position(self, position):
+        self.x, self.y = position
+
+    def get_curr_dir(self):
+        return self.current_direction
+
+    def get_next_dir(self):
+        return self.next_direction
+
+    def set_next_dir(self, direction):
+        self.next_direction = direction
+
+    def set_curr_dir(self, direction):
+        self.current_direction = direction
+        self.next_direction = ''
 
 
 
