@@ -458,6 +458,10 @@ class Pacman:  # класс Пакмена
     def set_curr_dir(self, direction):
         self.current_direction = direction
         self.next_direction = ''
+    def render(self, screen):
+        """метод рендера героя на экран"""
+        center = self.x * TILE_SIZE + TILE_SIZE // 2, self.y * TILE_SIZE + TILE_SIZE // 2
+        pygame.draw.circle(screen, (255, 255, 0), center, TILE_SIZE // 2)
 
 
 
