@@ -1,6 +1,6 @@
 import sys
 import pygame
-import pygame_gui  # необхідні бібліотеки
+import pygame_gui  # необходимые библиотеки
 import os
 
 pygame.init()
@@ -15,6 +15,52 @@ directories = ['characters', 'maps', 'screenshots', 'sounds']
 abs_paths = {dir_name: os.path.join(project_root, dir_name) for dir_name in directories}
 
 # Теперь переменная abs_paths доступна для использования во всех функциях и частях кода
+
+
+
+MENU_SIZE = 430, 430
+WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT = 670, 800
+TILE_SIZE = 24
+GAME_EVENT_TYPE = pygame.USEREVENT + 1
+pygame.time.set_timer(GAME_EVENT_TYPE, 150)
+PACMAN_EVENT = pygame.USEREVENT + 2
+pygame.time.set_timer(PACMAN_EVENT, 170)
+SONG_END = pygame.USEREVENT + 3  # константы и события
+
+POSITIONS = {
+    'first_map.txt': {
+        'pacman': (5, 15),
+        'red': (9, 9),
+        'pink': (18, 19),
+        'blue': (26, 21),
+        'orange': (2, 30)},
+    'second_map.txt': {
+        'pacman': (2, 19),
+        'red': (21, 18),
+        'pink': (9, 27),
+        'blue': (9, 2),
+        'orange': (2, 8)},
+    'third_map.txt': {
+        'pacman': (1, 27),
+        'red': (26, 20),
+        'pink': (12, 9),
+        'blue': (4, 8),
+        'orange': (1, 14)},
+    'fourth_map.txt': {
+        'pacman': (14, 30),
+        'red': (26, 18),
+        'pink': (1, 7),
+        'blue': (6, 28),
+        'orange': (7, 9)},
+    'fifth_map.txt': {
+        'pacman': (1, 30),
+        'red': (12, 18),
+        'pink': (21, 9),
+        'blue': (15, 30),
+        'orange': (5, 12)},
+}  # Положения персонажей в зависимости от уровня
+
+
 class Labyrinth:  # Класс, выстраивающий лабиринт и отвечающий за навигацию в нём
     def __init__(self, filename, free_tiles, finish_tile):
         """инициализатор класса"""
@@ -36,6 +82,7 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
                 rect = pygame.Rect(x * self.tile_size, y * self.tile_size,
                                    self.tile_size, self.tile_size)
                 screen.fill(colors[self.get_tile_id((x, y))], rect)
+
     def get_tile_id(self, position):
         """вспомогательный метод, возвращающий id тайла"""
         return self.map[position[1]][position[0]]
@@ -43,6 +90,7 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
     def is_free(self, position):
         """вспомогательный метод, возвращающий True/False если клетка свободна/занята"""
         return self.get_tile_id(position) in self.free_tiles
+
     def find_path_step(self, start, target, direction):
         """алгоритм построения маршрута для призраков (поиск следующего тайла)"""
         x, y = start
@@ -82,17 +130,213 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         return tile_list[distance.index(min(distance))]
 
 
+class Pacman:  # класс Пакмена
+    def __init__(self, position):
+        """инициализатор класса"""
+        self.next_direction = ''
+        self.current_direction = 'left'
+        self.x, self.y = position
+
+    # вспомогательные методы, возвращающие информацию о положении Пакмена / выставляющие эти значения
+    def get_position(self):
+        return self.x, self.y
+
+    def set_position(self, position):
+        self.x, self.y = position
+
+    def get_curr_dir(self):
+        return self.current_direction
+
+    def get_next_dir(self):
+        return self.next_direction
+
+    def set_next_dir(self, direction):
+        self.next_direction = direction
+
+    def set_curr_dir(self, direction):
+        self.current_direction = direction
+        self.next_direction = ''
+
+    def render(self, screen):
+        """метод рендера героя на экран"""
+        center = self.x * TILE_SIZE + TILE_SIZE // 2, self.y * TILE_SIZE + TILE_SIZE // 2
+        pygame.draw.circle(screen, (255, 255, 0), center, TILE_SIZE // 2)
 
 
+class Red:  # Класс красного призрака
+    def __init__(self, position):
+        """инициализатор класса"""
+        self.direction = 'up'
+        self.x, self.y = position
+        self.delay = 200
+        self.image = pygame.image.load(f'characters/red/{self.direction}1.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count = 0
+        pygame.time.set_timer(GAME_EVENT_TYPE, self.delay)
+
+    # вспомогательные методы, возвращающие информацию о положении призрака / выставляющие эти значения
+    def get_position(self):
+        return self.x, self.y
+
+    def set_position(self, position):
+        self.x, self.y = position
+
+    def get_direction(self):
+        return self.direction
+
+    def set_direction(self, direction):
+        self.direction = direction
+
+    def update_image(self):
+        """метод обновления текстуры призрака"""
+        self.image = pygame.image.load(f'characters/red/{self.direction}{self.count % 2}.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count += 1
+
+    def render(self, screen):
+        """метод рендера призрака на экран"""
+        delta = (self.image1.get_width() - TILE_SIZE) // 2
+        screen.blit(self.image1, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
 
 
+class Pink:  # Класс розового призрака
+    def __init__(self, position):
+        """инициализатор класса"""
+        self.direction = 'up'
+        self.x, self.y = position
+        self.delay = 200
+        self.image = pygame.image.load(f'characters/pink/{self.direction}1.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count = 0
+        pygame.time.set_timer(GAME_EVENT_TYPE, self.delay)
+
+    # вспомогательные методы, возвращающие информацию о положении призрака / выставляющие эти значения
+    def get_position(self):
+        return self.x, self.y
+
+    def set_position(self, position):
+        self.x, self.y = position
+
+    def get_direction(self):
+        return self.direction
+
+    def set_direction(self, direction):
+        self.direction = direction
+
+    def update_image(self):
+        """метод обновления текстуры призрака"""
+        self.image = pygame.image.load(f'characters/pink/{self.direction}{self.count % 2}.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count += 1
+
+    def render(self, screen):
+        """метод рендера призрака на экран"""
+        delta = (self.image1.get_width() - TILE_SIZE) // 2
+        screen.blit(self.image1, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
 
 
+class Blue:  # Класс голубого призрака
+    def __init__(self, position):
+        """инициализатор класса"""
+        self.direction = 'up'
+        self.x, self.y = position
+        self.delay = 100
+        self.image = pygame.image.load(f'characters/blue/{self.direction}1.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count = 0
+        pygame.time.set_timer(GAME_EVENT_TYPE, self.delay)
+
+    # вспомогательные методы, возвращающие информацию о положении призрака / выставляющие эти значения
+    def get_position(self):
+        return self.x, self.y
+
+    def set_position(self, position):
+        self.x, self.y = position
+
+    def get_direction(self):
+        return self.direction
+
+    def set_direction(self, direction):
+        self.direction = direction
+
+    def update_image(self):
+        """метод обновления текстуры призрака"""
+        self.image = pygame.image.load(f'characters/blue/{self.direction}{self.count % 2}.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count += 1
+
+    def render(self, screen):
+        """метод рендера призрака на экран"""
+        delta = (self.image1.get_width() - TILE_SIZE) // 2
+        screen.blit(self.image1, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
 
 
+class Orange:  # Класс оранжевого призрака
+    def __init__(self, position):
+        """инициализатор класса"""
+        self.direction = 'up'
+        self.x, self.y = position
+        self.delay = 200
+        self.image = pygame.image.load(f'characters/orange/{self.direction}1.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count = 0
+        pygame.time.set_timer(GAME_EVENT_TYPE, self.delay)
+
+    # вспомогательные методы, возвращающие информацию о положении призрака / выставляющие эти значения
+    def get_position(self):
+        return self.x, self.y
+
+    def set_position(self, position):
+        self.x, self.y = position
+
+    def get_direction(self):
+        return self.direction
+
+    def set_direction(self, direction):
+        self.direction = direction
+
+    def update_image(self):
+        """метод обновления текстуры призрака"""
+        self.image = pygame.image.load(f'characters/orange/{self.direction}{self.count % 2}.png')
+        self.image1 = pygame.transform.scale(self.image, (24, 24))
+        self.count += 1
+
+    def render(self, screen):
+        """метод рендера призрака на экран"""
+        delta = (self.image1.get_width() - TILE_SIZE) // 2
+        screen.blit(self.image1, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
 
 
-        """Моя частина"""
+class Game:  # Класс, управляющий игрой
+    def __init__(self, labyrinth, pacman, red, pink, blue, orange):
+        """инициализатор класса"""
+        self.labyrinth = labyrinth
+        self.pacman = pacman
+        self.red = red
+        self.pink = pink
+        self.blue = blue
+        self.orange = orange
+
+    def render(self, screen):
+        """рендер персонажей на экран"""
+        self.labyrinth.render(screen)
+        self.pacman.render(screen)
+        self.red.render(screen)
+        self.pink.render(screen)
+        self.blue.render(screen)
+        self.orange.render(screen)
+
+    def direct_pacman(self):
+        """метод, изменяющий следующее направление движения пакмена"""
+        if pygame.key.get_pressed()[pygame.K_LEFT] or pygame.key.get_pressed()[pygame.K_a]:
+            self.pacman.set_next_dir('left')
+        if pygame.key.get_pressed()[pygame.K_RIGHT] or pygame.key.get_pressed()[pygame.K_d]:
+            self.pacman.set_next_dir('right')
+        if pygame.key.get_pressed()[pygame.K_UP] or pygame.key.get_pressed()[pygame.K_w]:
+            self.pacman.set_next_dir('up')
+        if pygame.key.get_pressed()[pygame.K_DOWN] or pygame.key.get_pressed()[pygame.K_s]:
+            self.pacman.set_next_dir('down')
+
     def update_direct_pacman(self):
         """метод, выставляющий следующее направление пакмена, если такой поворот возможен"""
         next_x, next_y = self.pacman.get_position()
@@ -128,7 +372,6 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         self.red.set_direction(find_direction(self.red.get_position(), next_position))
         self.red.set_position(next_position)
         self.red.update_image()
-
 
     def move_pink(self):
         """метод перемещения розового призрака"""
@@ -189,7 +432,7 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         """проверка на победу"""
         if not self.check_lose():
             return self.labyrinth.get_tile_id(self.pacman.get_position()) == self.labyrinth.finish_tile
-        
+
     def check_lose(self):
         """проверка на поражение"""
         return (self.pacman.get_position() == self.red.get_position() or
@@ -198,9 +441,9 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
                 self.pacman.get_position() == self.blue.get_position())
 
 
-     def find_direction(start, target):
-        """Функция, определяющая направление движения призрака, исходя из текущего и следующего положения"""
-        x, y = start
+def find_direction(start, target):
+    """Функция, определяющая направление движения призрака, исходя из текущего и следующего положения"""
+    x, y = start
     xn, yn = target
     if xn - x == 1:
         return 'right'
@@ -210,8 +453,9 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
         return 'down'
     if yn - y == - 1:
         return 'up'
-    
-    def show_message(screen, message1, message2):
+
+
+def show_message(screen, message1, message2):
     """Функция вывода сообщения на экран в конце игры"""
     font = pygame.font.Font(None, 50)
     text1 = font.render(message1, True, (50, 70, 0))
@@ -234,16 +478,20 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
     screen.blit(text2, (text_x1, text_y1 + 50))
 
 
-    def terminate():
+def terminate():
     """Функция закрытия игры"""
     pygame.quit()
     sys.exit()
 
-    def load_menu():
+
+def load_menu():
     """Функция загрузки и обработки меню"""
     pygame.init()
 
-    instruction_text = ['', 'By Maxim&Maxim!']
+    instruction_text = ['', 'Проведите пакмена через', 'систему лабиринтов на свободу.',
+                        'Чтобы пройти лабиринт нужно', 'дойти до серой клетки, избегая',
+                        'призраков. Для управления', 'используйте клавиши со стрелками',
+                        'или WASD. Смена уровня возможна', 'только в меню. Приятной игры!']
     text_color = 65, 65, 190
     instruction_font = pygame.font.SysFont('', 18)
 
@@ -432,9 +680,3 @@ def main(map):
 
 if __name__ == '__main__':  # Запуск меню
     load_menu()
-
-
-
-
-
-            
