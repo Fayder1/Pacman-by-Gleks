@@ -1,6 +1,12 @@
+import sys
+import os
 import pytest
 from unittest import mock
-from app import Labyrinth, Pacman, Red, Pink, Blue, Orange, Game, find_direction
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from Pacman import Labyrinth, Pacman, Red, Pink, Blue, Orange, Game, find_direction
+
 
 @pytest.fixture
 def dummy_labyrinth():
@@ -54,8 +60,7 @@ def test_render_calls():
 
 def test_check_lose(dummy_game):
     dummy_game.pacman.set_position(dummy_game.red.get_position())
-    assert dummy_game.check_lose() == True
-
+    assert dummy_game.check_lose() is True
 
 def test_check_win(monkeypatch, dummy_game):
     monkeypatch.setattr(dummy_game.labyrinth, 'get_tile_id', lambda pos: 2)
