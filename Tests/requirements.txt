@@ -1,0 +1,6 @@
+pygame
+pygame_gui
+pytest
+pytest-html
+flake8
+flake8-html

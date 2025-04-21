@@ -488,10 +488,11 @@ def load_menu():
     """Функция загрузки и обработки меню"""
     pygame.init()
 
-    instruction_text = ['', 'Проведите пакмена через', 'систему лабиринтов на свободу.',
-                        'Чтобы пройти лабиринт нужно', 'дойти до серой клетки, избегая',
-                        'призраков. Для управления', 'используйте клавиши со стрелками',
-                        'или WASD. Смена уровня возможна', 'только в меню. Приятной игры!']
+    instruction_text = ['', 'Made with Python using Pygame.', 
+                    '', '', 
+                    '', '', 
+                    '', '', 
+                    '', '']
     text_color = 65, 65, 190
     instruction_font = pygame.font.SysFont('', 18)
 
@@ -500,7 +501,7 @@ def load_menu():
     screen = pygame.display.set_mode(MENU_SIZE)
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
-    text = font.render("Pac-man: chase!", True, (254, 254, 34))
+    text = font.render("Pac-man: Max&Max!", True, (254, 254, 34))
     text_x = 20
     text_y = 20
     text_w = text.get_width()
