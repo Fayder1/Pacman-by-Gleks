@@ -66,3 +66,5 @@ def test_check_win(monkeypatch, dummy_game):
     monkeypatch.setattr(dummy_game.labyrinth, 'get_tile_id', lambda pos: 2)
     dummy_game.pacman.set_position((0, 0))
     assert dummy_game.check_win() is True
+#     $env:PYTHONPATH = Get-Location pytest Tests/test_app.py --html=report.html
+
