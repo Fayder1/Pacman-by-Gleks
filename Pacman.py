@@ -1,22 +1,6 @@
 import sys
 import pygame
 import pygame_gui  # необходимые библиотеки
-import os
-
-pygame.init()
-
-# Путь к корню вашего проекта
-project_root = r'C:\Users\mnebr\PycharmProjects\PythonProject'
-
-# Директории, с которыми вы работаете
-directories = ['characters', 'maps', 'screenshots', 'sounds']
-
-# Получаем абсолютные пути для каждой из директорий
-abs_paths = {dir_name: os.path.join(project_root, dir_name) for dir_name in directories}
-
-# Теперь переменная abs_paths доступна для использования во всех функциях и частях кода
-
-
 
 MENU_SIZE = 430, 430
 WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT = 670, 800
@@ -102,7 +86,8 @@ class Labyrinth:  # Класс, выстраивающий лабиринт и �
                 tile_list.append((x, y - 1))
             if self.is_free((x - 1, y)):
                 tile_list.append((x - 1, y))
-            if self.is_free((x + 1, y)): tile_list.append((x + 1, y))
+            if self.is_free((x + 1, y)):
+                tile_list.append((x + 1, y))
         if direction == 'down':
             if self.is_free((x - 1, y)):
                 tile_list.append((x - 1, y))
@@ -488,20 +473,19 @@ def load_menu():
     """Функция загрузки и обработки меню"""
     pygame.init()
 
-    instruction_text = ['', 'Made with Python using Pygame.', 
-                    '', '', 
-                    '', '', 
-                    '', '', 
-                    '', '']
+    instruction_text = ['Comic Sans MS', 'Проведите пакмена через', 'систему лабиринтов на свободу.',
+                        'Чтобы пройти лабиринт нужно', 'дойти до серой клетки, избегая',
+                        'призраков. Для управления', 'используйте клавиши со стрелками',
+                        'или WASD. Смена уровня возможна', 'только в меню. Приятной игры!']
     text_color = 65, 65, 190
-    instruction_font = pygame.font.SysFont('', 18)
+    instruction_font = pygame.font.SysFont('Comic Sans MS', 18)
 
     pygame.display.set_caption('Pac-man: chase!')
     manager = pygame_gui.UIManager(MENU_SIZE)
     screen = pygame.display.set_mode(MENU_SIZE)
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
-    text = font.render("Pac-man: Max&Max!", True, (254, 254, 34))
+    text = font.render("Pac-man: chase!", True, (254, 254, 34))
     text_x = 20
     text_y = 20
     text_w = text.get_width()
@@ -516,7 +500,7 @@ def load_menu():
     for i in range(2, 9):
         screen.blit(instruction_font.render(instruction_text[i], True, text_color), (12, 120 + ((i - 3) * 20)))
 
-    select = pygame.mixer.Sound(os.path.join(abs_paths['sounds'], 'button.wav.wav'))
+    select = pygame.mixer.Sound('sounds/button.wav')
 
     but1 = pygame_gui.elements.UIButton(
         relative_rect=pygame.Rect((340, 70), (90, 50)),
@@ -594,12 +578,11 @@ def main(map):
     game = Game(labyrinth, pacman, red, pink, blue, orange)
 
     pygame.mixer.music.set_endevent(SONG_END)
-    pygame.mixer.music.load(os.path.join(abs_paths['sounds'], 'start-up.wav'))
+    pygame.mixer.music.load('sounds/start-up.wav')
     pygame.mixer.music.play()
 
-    victory = pygame.mixer.Sound(os.path.join(abs_paths['sounds'], 'victory.wav'))
-    lose = pygame.mixer.Sound(os.path.join(abs_paths['sounds'], 'lose.wav'))
-
+    victory = pygame.mixer.Sound('sounds/victory.wav')
+    lose = pygame.mixer.Sound('sounds/lose.wav')
     sound_not_played1 = True
     sound_not_played2 = True
 
