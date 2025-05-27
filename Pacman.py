@@ -2,6 +2,10 @@ import sys
 import pygame
 import pygame_gui  # необходимые библиотеки
 
+
+pygame.init()
+
+
 MENU_SIZE = 430, 430
 WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT = 670, 800
 TILE_SIZE = 24
